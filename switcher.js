@@ -303,7 +303,8 @@ var SOUND_CHOICE = {
   // A person chose a stop: move, then tell the globe. Choosing the stop the knob is
   // already on still counts, because it leaves Live for a preview.
   function pick(mood) {
-    if (!setMood(mood, true)) { play(mood, 1); squash(0.4); }
+    // The globe is told even if the sound or the squash fails on this device.
+    try { if (!setMood(mood, true)) { play(mood, 1); squash(0.4); } } catch (e) {}
     document.dispatchEvent(new CustomEvent('globe:pick', { detail: { mood: mood } }));
   }
 

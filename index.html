@@ -97,7 +97,8 @@
     font: italic 600 19px/1.2 "Playfair Display", Georgia, serif;
     background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size var(--fast) var(--smooth);
   }
-  .sig a:hover, .sig a:focus-visible { background-size: 100% 1px; }
+  .sig a:focus-visible { background-size: 100% 1px; }
+  @media (hover: hover) { .sig a:hover { background-size: 100% 1px; } }
   .sig a:focus-visible { outline: 2px solid var(--glyph); outline-offset: 4px; border-radius: 2px; }
   .dockwrap { grid-column: 2; grid-row: 1; display: grid; justify-items: center; gap: 12px; pointer-events: none; }
   .dockwrap > * { pointer-events: auto; }
@@ -128,7 +129,7 @@
     box-shadow: inset 0 0 0 1px var(--rim);
     transition: opacity var(--fast) var(--smooth), transform var(--fast) var(--smooth);
   }
-  .live:hover { color: var(--text); }
+  @media (hover: hover) { .live:hover { color: var(--text); } }
   .live:active { transform: scale(0.97); }
   .live:focus-visible { outline: 2px solid var(--glyph); outline-offset: 3px; }
   .live[aria-pressed="true"] { color: var(--text); }
@@ -149,7 +150,7 @@
     box-shadow: inset 0 0 0 1px var(--rim);
     transition: opacity var(--quick) ease-out, transform var(--fast) var(--smooth);
   }
-  .round:hover { color: var(--text); }
+  @media (hover: hover) { .round:hover { color: var(--text); } }
   .round:active { transform: scale(0.92); }
   .round:focus-visible { outline: 2px solid var(--glyph); outline-offset: 3px; }
   .round[aria-pressed="true"] { color: var(--text); }
@@ -180,10 +181,12 @@
     padding: 6px 10px; border-radius: 2px; background: var(--text); color: var(--bg); font: 500 12px/1 "Inter", sans-serif;
     opacity: 0; transform: translateX(-50%) scale(0.98); transform-origin: 50% 100%;
   }
-  [data-tip]:hover::after, [data-tip]:focus-visible::after { opacity: 1; transform: translateX(-50%) scale(1); transition: opacity var(--quick) ease-out 80ms, transform var(--quick) ease-out 80ms; }
+  [data-tip]:focus-visible::after { opacity: 1; transform: translateX(-50%) scale(1); transition: opacity var(--quick) ease-out 80ms, transform var(--quick) ease-out 80ms; }
+  @media (hover: hover) { [data-tip]:hover::after { opacity: 1; transform: translateX(-50%) scale(1); transition: opacity var(--quick) ease-out 80ms, transform var(--quick) ease-out 80ms; } }
   .toggle [data-tip]::after { font-size: 14.6px; padding: 7px 12px; bottom: calc(100% + 16px); }
   .side [data-tip]::after { left: auto; right: 0; transform: scale(0.98); transform-origin: 100% 100%; }
-  .side [data-tip]:hover::after, .side [data-tip]:focus-visible::after { transform: scale(1); }
+  .side [data-tip]:focus-visible::after { transform: scale(1); }
+  @media (hover: hover) { .side [data-tip]:hover::after { transform: scale(1); } }
 
   /* The switch, at a size that leaves the globe in charge. */
   .toggle-wrap { width: 190px; height: 72px; }
@@ -201,13 +204,13 @@
     border-radius: 50%; background: none; color: var(--stop); opacity: 0.75; cursor: pointer;
     transition: opacity 300ms ease; -webkit-tap-highlight-color: transparent;
   }
-  .toggle__stop:hover { opacity: 1; }
+  @media (hover: hover) { .toggle__stop:hover { opacity: 1; } }
   .toggle__stop[aria-checked="true"] { opacity: 0; }
   .toggle__stop:focus-visible { opacity: 1; outline: 2px solid var(--glyph); outline-offset: 2px; }
   .toggle__stop svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transition: transform 600ms var(--settle); }
-  .toggle__stop[data-mood="light"]:hover svg { transform: rotate(45deg) scale(1.1); }
-  .toggle__stop[data-mood="dark"]:hover svg { transform: rotate(-18deg) scale(1.1); }
-  .toggle__stop[data-mood="sunset"]:hover svg { transform: translateY(-2px) scale(1.1); }
+  @media (hover: hover) { .toggle__stop[data-mood="light"]:hover svg { transform: rotate(45deg) scale(1.1); } }
+  @media (hover: hover) { .toggle__stop[data-mood="dark"]:hover svg { transform: rotate(-18deg) scale(1.1); } }
+  @media (hover: hover) { .toggle__stop[data-mood="sunset"]:hover svg { transform: translateY(-2px) scale(1.1); } }
 
   .toggle__knob {
     position: absolute; z-index: 2; top: var(--pad); left: var(--pad); width: var(--knob-size); height: var(--knob-size);

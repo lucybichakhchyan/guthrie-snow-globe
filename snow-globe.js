@@ -97,7 +97,9 @@ try {
 }
 // The canvas is see-through around the globe, so the page's own colour shows behind it.
 renderer.setClearColor(0x000000, 0);
-renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+// Phones and tablets draw fewer pixels from the start, so taps are answered straight away.
+const touchDevice = matchMedia('(pointer: coarse)').matches;
+renderer.setPixelRatio(Math.min(devicePixelRatio, touchDevice ? 1.5 : 2));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.NeutralToneMapping;
@@ -118,7 +120,7 @@ controls.rotateSpeed = 0.55;
 controls.minPolarAngle = rad(46);
 controls.maxPolarAngle = rad(86);
 
-const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(4, 4, { type: THREE.HalfFloatType, samples: 4 }));
+const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(4, 4, { type: THREE.HalfFloatType, samples: touchDevice ? 2 : 4 }));
 composer.addPass(new RenderPass(scene, camera, null, new THREE.Color(0x000000), 0));
 const bloom = new UnrealBloomPass(new THREE.Vector2(4, 4), 0.3, 0.5, 1.0);
 // Glow is added to the colour only. It must not make the see-through page behind the globe any more solid.
@@ -155,7 +157,7 @@ const hemi = new THREE.HemisphereLight(0xffffff, 0x1a1626, 0.4);
 scene.add(hemi);
 const sunLight = new THREE.DirectionalLight(0xffffff, 2);
 sunLight.castShadow = true;
-sunLight.shadow.mapSize.set(2048, 2048);
+sunLight.shadow.mapSize.setScalar(touchDevice ? 1024 : 2048);
 Object.assign(sunLight.shadow.camera, { left: -3.3, right: 3.3, top: 3.3, bottom: -3.3, near: 1, far: 26 });
 sunLight.shadow.bias = -0.0004; sunLight.shadow.normalBias = 0.02; sunLight.shadow.radius = 4;
 scene.add(sunLight, sunLight.target);
@@ -1130,7 +1132,7 @@ function update(dt, now) {
     mirrorCam.update(renderer, mirrorScene);
     mirrorEnv = pmrem.fromCubemap(mirrorRT.texture, mirrorEnv);
     scene.environment = mirrorEnv.texture;
-    mirrorAt = now + (moving ? 0 : 600);
+    mirrorAt = now + (moving ? (touchDevice || lowQuality ? 120 : 0) : 600);
   }
   glassU.uRim.value.copy(cHor).lerp(cTmp.setRGB(1, 1, 1), 0.45).multiplyScalar((0.3 + 0.7 * day) * (1 - 0.6 * paper));
   glassU.uRoom.value = (0.4 + 0.6 * day) * (1 - 0.45 * paper);
@@ -1360,14 +1362,22 @@ requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove('i
 
 // The opening: the camera eases in while the snow settles.
 const OPENING = 2800;
-let openedAt = 0, lowQuality = false, slowSum = 0, slowN = 0;
+let openedAt = 0, lowQuality = 0, slowSum = 0, slowN = 0;
 let last = performance.now(), statusAt = 0;
 function frame(now) {
-  const real = now - last, dt = Math.min(0.05, real / 1000); last = now;
+  const real = now - last, dt = Math.min(0.1, real / 1000); last = now;
   // If the device cannot keep up, draw fewer pixels and drop the edge blur.
-  if (!lowQuality && openedAt && now - openedAt > OPENING && real < 250) {
+  if (lowQuality < 2 && openedAt && now - openedAt > 600 && real < 2000) {
     slowSum += real; slowN++;
-    if (slowN === 50) { if (slowSum / slowN > 42) { lowQuality = true; renderer.setPixelRatio(1); tilt.enabled = false; resize(); } slowSum = slowN = 0; }
+    if (slowN === 30) {
+      if (slowSum / slowN > 36) {
+        lowQuality++;
+        if (lowQuality === 1) { renderer.setPixelRatio(1); tilt.enabled = false; }
+        else { renderer.setPixelRatio(0.75); bloom.enabled = false; }
+        resize();
+      }
+      slowSum = slowN = 0;
+    }
   }
   if (!openedAt) { openedAt = now; root.classList.add('is-ready'); if (!reduceMotion) shake(true); }
   const o = reduceMotion ? 1 : clamp((now - openedAt) / OPENING, 0, 1), eased = 1 - Math.pow(1 - o, 3);
