@@ -268,7 +268,16 @@
   .cursor.is-down { scale: 0.42; }
   .cursor.is-down span { opacity: 0; }
 
-  .loading { position: fixed; inset: 0; z-index: 1; display: grid; place-items: center; margin: 0; font-size: 13px; color: var(--stop); pointer-events: none; transition: opacity var(--slow) ease-in-out; }
+  .loading { position: fixed; inset: 0; z-index: 1; display: grid; place-items: center; margin: 0; pointer-events: none; transition: opacity var(--very-slow) ease-in-out; }
+  .mast { position: relative; width: 44px; height: min(240px, 40vh); background: #1638E0; overflow: hidden; transform-origin: 50% 100%; animation: mast-rise var(--very-slow) cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .mast__run { display: block; animation: mast-scroll 3.6s linear -1.3s infinite; }
+  .mast__run span { display: block; height: 30px; font: 600 20px/30px Inter, system-ui, sans-serif; color: #fff; text-align: center; }
+  .mast__run span:nth-child(7n) { margin-bottom: 90px; }
+  .mast__run span:first-child { margin-top: min(240px, 40vh); }
+  @keyframes mast-rise { from { transform: scaleY(0); } }
+  @keyframes mast-scroll { to { transform: translateY(-300px); } }
+  .is-ready .mast__run, .no-gl .mast__run, .load-failed .mast__run { animation-play-state: paused; }
+  @media (prefers-reduced-motion: reduce) { .mast, .mast__run { animation: none; } .mast__run span:first-child { margin-top: 15px; } }
   .is-ready .loading, .no-gl .loading, .load-failed .loading { opacity: 0; }
   .no-gl .enter, .load-failed .enter { opacity: 1; transform: none; filter: none; }
   .fail { position: fixed; inset: 0; z-index: 3; display: none; place-items: center; text-align: center; padding: 24px; color: var(--stop); }
@@ -305,7 +314,7 @@
 </head>
 <body>
 <div id="stage" role="img" aria-label="A snow globe holding a model of the Guthrie Theater. Its light and weather follow Minneapolis."></div>
-<p class="loading">Loading the globe</p>
+<div class="loading" role="status"><span class="sr-only">Loading the globe</span><span class="mast" aria-hidden="true"><span class="mast__run"><span>L</span><span>O</span><span>A</span><span>D</span><span>I</span><span>N</span><span>G</span><span>L</span><span>O</span><span>A</span><span>D</span><span>I</span><span>N</span><span>G</span><span>L</span><span>O</span><span>A</span><span>D</span><span>I</span><span>N</span><span>G</span></span></span></div>
 <p class="fail fail--gl" role="alert">This page needs WebGL to show the snow globe. Try another browser, or turn on hardware acceleration.</p>
 <p class="fail fail--load" role="alert">The globe could not load. Check your connection, then reload the page.</p>
 
